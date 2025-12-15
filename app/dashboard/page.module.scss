@@ -1,0 +1,45 @@
+.dashboard {
+    &_title {
+        font-style: normal;
+        font-weight: 700;
+        font-size: 24px;
+        line-height: 29px;
+    }
+
+    &_meter_title {
+        font-weight: 500;
+        font-size: 16px;
+        line-height: 20px;
+        color: #464646;
+    }
+
+    &_meter_reading {
+        /* 50 KWh */
+        font-weight: 700;
+        font-size: 15px;
+        line-height: 18px;
+        color: #000000;
+
+    }
+
+
+    &_metrics {
+        background-color: #fff;
+        padding: 24px;
+        box-shadow: 2px 2px 8px rgba(0, 0, 0, 0.12);
+        border-radius: 12px;
+    }
+
+    &_payment_type_badge {
+        padding: 3px 12px;
+        background: #FFDEDE;
+        border-radius: 15px;
+    }
+
+    &_received {
+        font-weight: 700;
+        font-size: 16px;
+        line-height: 20px;
+        color: #7D7D7D;
+    }
+}

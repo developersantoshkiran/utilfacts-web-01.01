@@ -1,0 +1,36 @@
+.herocard {
+    padding: 24px;
+    height: 143px;
+    background: #F6F4FF;
+    border: 1px solid #E7E7E7;
+    border-radius: 10px;
+
+    .title {
+        /* UtilFacts */
+        font-weight: 700;
+        font-size: 24px;
+        // line-height: 33px;
+        /* or 33px */
+
+        color: #6E5DE7;
+
+
+    }
+
+    .description,
+    .actions {
+        font-weight: 500;
+        font-size: 16px;
+        // line-height: 20px;
+        color: #1D1D1D;
+        display: flex;
+
+        &>span {
+            padding-right: 10px
+        }
+    }
+
+    &_hover:hover {
+        cursor: pointer;
+    }
+}

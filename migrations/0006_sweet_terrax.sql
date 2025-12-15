@@ -1,0 +1,1 @@
+ALTER TABLE "services" ADD COLUMN "active" boolean DEFAULT true;

@@ -1,0 +1,62 @@
+{
+  "version": "7",
+  "dialect": "postgresql",
+  "entries": [
+    {
+      "idx": 0,
+      "version": "7",
+      "when": 1732022328744,
+      "tag": "0000_fancy_orphan",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1732022476225,
+      "tag": "0001_entity_consumption_hyper_table",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1748065923711,
+      "tag": "0002_overrated_centennial",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1748358723515,
+      "tag": "0003_milky_captain_britain",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1748360022573,
+      "tag": "0004_eminent_golden_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1748754154342,
+      "tag": "0005_slim_lord_tyger",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1748758744677,
+      "tag": "0006_sweet_terrax",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1751727502598,
+      "tag": "0007_groovy_the_leader",
+      "breakpoints": true
+    }
+  ]
+}

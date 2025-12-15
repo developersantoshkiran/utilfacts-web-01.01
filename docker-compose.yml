@@ -1,0 +1,49 @@
+version: '3.8'
+services:
+  nginix:
+    image: jonasal/nginx-certbot:latest
+    ports:
+      - 80:80
+      - 443:443
+    environment:
+      - CERTBOT_EMAIL:{{CERTBOT_EMAIL}}
+    env_file:
+      - ./nginx/nginx-certbot.env
+    ports:
+      - 80:80
+      - 443:443
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:                                    # Storage can be either a
+      - nginx_secrets:/etc/letsencrypt          # Docker managed volume (see list at the bottom)
+      - ./nginx/user_conf.d:/etc/nginx/user_conf.d  
+
+  nodejs:
+    build:
+      context: "./"
+      args:
+        PORT: ${PORT}
+        BASIC_AUTH_USER: ${BASIC_AUTH_USER}
+        BASIC_AUTH_PASSWORD: ${BASIC_AUTH_PASSWORD}
+    ports:
+      - "${PORT}:3000"
+    depends_on:
+      - db
+    env_file: ".env"
+    volumes:
+    - .:/app
+    - /app/node_modules
+  db:
+    image: timescale/timescaledb:latest-pg16
+    volumes:
+      - ../database:/var/lib/postgresql/data
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DATABASE}
+    expose: 
+      - "5432"
+    ports: 
+      - "5432:5432"
+volumes:
+    nginx_secrets:

@@ -22,7 +22,11 @@ export async function GET(
     let projectName = selectedProject.name;
     const searchParams = req.nextUrl.searchParams;
     const sub_service = searchParams.get('subService');
+<<<<<<< HEAD
     const { rows } = await db.execute(sql`with bucketed as (select time_bucket('1 month', ec."created_At") AS month, ec.entity_service_id,
+=======
+    const { rows } = await db.execute(sql`with bucketed as (select date_trunc('month', ec."created_At") AS month, ec.entity_service_id,
+>>>>>>> 58a85e8 (Working code utilfactswebportalv1.0)
 max(ec.units_consumed) as units_consumed from entity_consumption ec 
 left join entity_services es on es.id = ec.entity_service_id 
 left join services s on es.service_id = s.id 

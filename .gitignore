@@ -19,6 +19,10 @@
 # misc
 .DS_Store
 *.pem
+<<<<<<< HEAD
+=======
+*.txt
+>>>>>>> 58a85e8 (Working code utilfactswebportalv1.0)
 
 # debug
 npm-debug.log*

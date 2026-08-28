@@ -27,12 +27,16 @@ import { GET } from './utils/api';
 import { SessionContext } from './_providers/sessionProvides';
 import Logout from './_components/logout';
 
-
 export default function Home() {
-  
   const { push, replace } = useRouter();
-   let session = useContext(SessionContext)
+  let session = useContext(SessionContext);
   const [anchorElUser, setAnchorElUser] = useState<null | HTMLElement>(null);
+  const [isMounted, setIsMounted] = useState(false);
+
+  // Client Mount Synchronizer Guard
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
 
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElUser(event.currentTarget);
@@ -42,119 +46,125 @@ export default function Home() {
     setAnchorElUser(null);
   };
 
-  const settings = [{name: 'Profile'}, {name:'Account'}, {name:'Dashboard'}, {name: <Logout/>, onClick: async () => { 
-    
+  const settings = [
+    { name: 'Profile' }, 
+    { name: 'Account' }, 
+    { name: 'Dashboard' }, 
+    { name: <Logout />, onClick: async () => {} }
+  ];
 
-  }}];
-  const pages = ['Products', 'Pricing', 'Blog'];
-  return <> <div style={{
-    padding: '24px 65px',
-    display: 'flex',
-    justifyContent: 'space-between'
-  }}>
-    <Image width='191' height='30' src='/logo.svg' alt="logo">
-    </Image>
+  // While compiling on the server, display a safe layout container shell.
+  // This allows Material UI to append its baseline CSS reset layers without layout errors.
+  if (!isMounted) {
+    return <main style={{ minHeight: "100vh", width: "100%", background: "#F9F9F9" }} />;
+  }
 
-    <Box sx={{ flexGrow: 0 }}>
-      <Tooltip title="Open settings">
-        <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-          <Avatar alt={session?.name} src="/static/images/avatar/2.jpg" />
-
-        </IconButton>
-      </Tooltip>
-      <Menu
-        sx={{ mt: '45px' }}
-        id="menu-appbar"
-        anchorEl={anchorElUser}
-        anchorOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        keepMounted
-        transformOrigin={{
-          vertical: 'top',
-          horizontal: 'right',
-        }}
-        open={Boolean(anchorElUser)}
-        onClose={handleCloseUserMenu}
-      >
-        {settings.map((setting, ind) => {
-          return <MenuItem key={ind} onClick={handleCloseUserMenu}>
-          <Typography textAlign="center" onClick={setting.onClick}>{setting.name}</Typography>
-        </MenuItem>
-        }
-          
-        )}
-      </Menu>
-    </Box>
-
-    {/* <button onClick={() => push('/dashboard')}>go to dashbaord</button> */}
-  </div>
-    <div id='hero-section' className={styles.hero}>
-      <div className={styles.hero_header}>BMS Pro</div>
-      <div className={styles["hero_description"]}>One stop platform for all the Building management services.</div>
-    </div>
-    <div style={{
-      paddingLeft: '67px',
-      paddingRight: '67px',
-    }}>
-      <div className={styles.billing_menu}>
-        <span className={styles.billing_menu_heading}>IBMS</span>
-
-      </div>
+  // FIX: Wrapped the layout structure inside a clear semantic container block and removed the raw text spacer
+  return (
+    <main style={{ minHeight: "100vh", width: "100%" }}>
       <div style={{
-        display: 'grid',
-        gap: '20px',
-        gridTemplateColumns: "repeat(auto-fill, minmax(602px, 1fr))"
+        padding: '24px 65px',
+        display: 'flex',
+        justifyContent: 'space-between'
       }}>
-        <HeroCard  onClick={() =>push('/dashboard') } title='UtilFacts' description='Utility management Systems'>
-          <span>Water</span>
-          <span>Gas</span>
-          <span>Electricity</span>
-        </HeroCard>
-        <HeroCard title='Security' description='Security Systems'>
-          <span>CCTV</span>
-          <span>Access Control</span>
-          <span>Boom Barrier</span>
-        </HeroCard>
-        <HeroCard title='Alaram' description='Life Safety Systems'>
-          <span>Fire Alaram</span>
-          <span>Public Addressable</span>
-        </HeroCard>
-        <HeroCard title='BMS' description='BUilding Management Systems'>
-          <span>Heating</span>
-          <span>Ventilation</span>
-          <span>Air Conditioning</span>
-        </HeroCard>
+        <Image width={191} height={30} src='/logo.svg' alt="logo" priority />
 
+        <Box sx={{ flexGrow: 0 }}>
+          <Tooltip title="Open settings">
+            <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
+              <Avatar alt={session?.name || "User"} src="/static/images/avatar/2.jpg" />
+            </IconButton>
+          </Tooltip>
+          <Menu
+            sx={{ mt: '45px' }}
+            id="menu-appbar"
+            anchorEl={anchorElUser}
+            anchorOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            keepMounted
+            transformOrigin={{
+              vertical: 'top',
+              horizontal: 'right',
+            }}
+            open={Boolean(anchorElUser)}
+            onClose={handleCloseUserMenu}
+          >
+            {settings.map((setting, ind) => (
+              <MenuItem key={ind} onClick={handleCloseUserMenu}>
+                <Typography textAlign="center" onClick={setting.onClick}>
+                  {setting.name}
+                </Typography>
+              </MenuItem>
+            ))}
+          </Menu>
+        </Box>
       </div>
 
-      <div className={styles.PMS}>
-        <span className={styles.PMS_heading}>PMS</span>
-
+      <div id='hero-section' className={styles.hero}>
+        <div className={styles.hero_header}>BMS Pro</div>
+        <div className={styles["hero_description"]}>One stop platform for all the Building management services.</div>
       </div>
+
       <div style={{
-        display: 'grid',
-        gap: '20px',
-        paddingBottom: '70px',
-        gridTemplateColumns: "repeat(auto-fill, minmax(607px, 1fr))"
+        paddingLeft: '67px',
+        paddingRight: '67px',
       }}>
-        <HeroCard title='Gate Management' description='Utility management System'>
-          <span>Visitors</span>
-          <span>Deliveries</span>
+        <div className={styles.billing_menu}>
+          <span className={styles.billing_menu_heading}>IBMS</span>
+        </div>
+        
+        <div style={{
+          display: 'grid',
+          gap: '20px',
+          gridTemplateColumns: "repeat(auto-fill, minmax(602px, 1fr))"
+        }}>
+          <HeroCard onClick={() => push('/dashboard')} title='UtilFacts' description='Utility management Systems'>
+            <span>Water</span>
+            <span>Gas</span>
+            <span>Electricity</span>
+          </HeroCard>
+          <HeroCard title='Security' description='Security Systems'>
+            <span>CCTV</span>
+            <span>Access Control</span>
+            <span>Boom Barrier</span>
+          </HeroCard>
+          <HeroCard title='Alaram' description='Life Safety Systems'>
+            <span>Fire Alaram</span>
+            <span>Public Addressable</span>
+          </HeroCard>
+          <HeroCard title='BMS' description='BUilding Management Systems'>
+            <span>Heating</span>
+            <span>Ventilation</span>
+            <span>Air Conditioning</span>
+          </HeroCard>
+        </div>
 
-        </HeroCard>
-        <HeroCard title='Complaints' description='Utility management System'>
-          <span>Grieviences</span>
-        </HeroCard>
-        <HeroCard title='PMS' description='Utility management System'>
-          <span>Accounting</span>
-          <span>Approval</span>
-          <span>Notices</span>
-        </HeroCard>
+        <div className={styles.PMS}>
+          <span className={styles.PMS_heading}>PMS</span>
+        </div>
+        
+        <div style={{
+          display: 'grid',
+          gap: '20px',
+          paddingBottom: '70px',
+          gridTemplateColumns: "repeat(auto-fill, minmax(607px, 1fr))"
+        }}>
+          <HeroCard title='Gate Management' description='Utility management System'>
+            <span>Visitors</span>
+            <span>Deliveries</span>
+          </HeroCard>
+          <HeroCard title='Complaints' description='Utility management System'>
+            <span>Grieviences</span>
+          </HeroCard>
+          <HeroCard title='PMS' description='Utility management System'>
+            <span>Accounting</span>
+            <span>Approval</span>
+            <span>Notices</span>
+          </HeroCard>
+        </div>
       </div>
-    </div>
-  </>
-
-
+    </main>
+  );
 }

@@ -8,7 +8,7 @@ import { Session } from './app/_types/types';
 const publicRoutes = ['/login', '/signup', '/verifyOTP', '/api/v1/login', '/api/v1/signup', '/api/v1/verifyOTP'];
 const basicAuthRoutes = ['/api/v1/sync']
 
-export default async function middleware(req: NextRequest) {
+export default async function proxy(req: NextRequest) {
 
     // 2. Check if the current route is protected or public
     const path = req.nextUrl.pathname;

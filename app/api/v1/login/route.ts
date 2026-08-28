@@ -14,22 +14,10 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: 'Couldnt send OTP' }, { status: 500 })
 
     } catch (e: any) {
-<<<<<<< HEAD
-        if (e.cause.code === '404') {
-            return NextResponse.json({ message: "User Not Found" }, { status: 404 })
-        }
-        return NextResponse.json({ message: e?.message }, { status: 500 })
-=======
-    //     if (e.cause.code === '404') {
-    //         return NextResponse.json({ message: "User Not Found" }, { status: 404 })
-    //     }
-    //     return NextResponse.json({ message: e?.message }, { status: 500 })
-    // }
-
-    console.error("LOGIN ERROR:", e);
+        console.error("LOGIN ERROR:", e);
 
     // Case 1: explicit 404 from DB or service
-    if (e?.cause?.code === '404' || e?.code === '404') {
+    if (e?.cause?.code === '404' || e?.code === '404' ||e?.message?.includes('404')) {
         return NextResponse.json(
             { message: "User Not Found" },
             { status: 404 }
@@ -49,6 +37,5 @@ export async function POST(req: NextRequest) {
         { message: "Internal Server Error" },
         { status: 500 }
     )
->>>>>>> 58a85e8 (Working code utilfactswebportalv1.0)
     }
 };

@@ -10,7 +10,7 @@ import { useFormik } from "formik";
 import { POST } from "../utils/api";
 import { signinResponse } from "../_types/types";
 import { enqueueSnackbar } from "notistack";
-import { useRef, useState } from "react";
+import { useRef, useState, useEffect } from "react";
 import { VerifyOTP } from "@/app/_components/verifyOTP";
 
 export default function Page() {
@@ -19,7 +19,14 @@ export default function Page() {
   const [showOTPPage, setShowOTPPage] = useState(false);
   const [otpReference, setotpReference] = useState('');
   const [otpresendTime, setOTPresetTime] = useState(0);
-  const formref = useRef(undefined)
+  const [isMounted, setIsMounted] = useState(false);
+  
+  const formRef = useRef<HTMLFormElement>(null);
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
   const validationSchema = yup?.object({
     mobileNumber: yup
       .string()
@@ -37,86 +44,86 @@ export default function Page() {
     onSubmit: async (values) => {
       try {
         setLoading(true);
-        const { reference,expiresInSeconds} = await POST<signinResponse>(
+        const { reference, expiresInSeconds } = await POST<signinResponse>(
           "/login",
           values
         );
         if(reference && expiresInSeconds) {
           setShowOTPPage(true);
           setotpReference(reference);
-          setOTPresetTime(expiresInSeconds)
+          setOTPresetTime(expiresInSeconds);
         }
-          
-      } catch(e:any) {
-        enqueueSnackbar(e.data.message || '', {variant: 'error', persist: true});
-        setLoading(false)
+      } catch(e: any) {
+        const errMsg = e?.data?.message || e?.message || "Something went wrong";
+        enqueueSnackbar(errMsg, { variant: 'error', persist: true });
+        setLoading(false);
       }
     },
   });
 
   function onResendOTPClick() {
-    formik.handleSubmit(formref.current)
+    formik.handleSubmit();
   }
+
+  // FIX: Allow the core page shell to load server-side so MUI can securely append its global styles.
+  // We only evaluate showOTPPage once the client mounting state completes (isMounted === true)
   return (
-    
-      showOTPPage?<VerifyOTP otpReference={otpReference} onResendOTPClick={onResendOTPClick} otpresendTime={otpresendTime}></VerifyOTP>:<div className="login">
-        <div className="hero">
-          <div className="hero-title">
-            <Image alt="logo" src="logo3.svg" width={300} height={40}></Image>
-            <div className="hero-subtitle">
-              Your One stop platform for all the Building management services.
+    <main style={{ minHeight: "100vh", width: "100%" }}>
+      {isMounted && showOTPPage ? (
+        <VerifyOTP 
+          otpReference={otpReference} 
+          onResendOTPClick={onResendOTPClick} 
+          otpresendTime={otpresendTime} 
+        />
+      ) : (
+        <div className="login">
+          <div className="hero">
+            <div className="hero-title">
+              <Image alt="logo" src="logo3.svg" width={300} height={40} priority></Image>
+              <div className="hero-subtitle">
+                Your One stop platform for all the Building management services.
+              </div>
             </div>
           </div>
+          <div className="main-content">
+            <form className="login-form" ref={formRef} onSubmit={formik.handleSubmit}>
+              <div className="app_title" style={{ marginBottom: "12px" }}>
+                Log In
+              </div>
+              <MuiTelInput
+                disableFormatting
+                name="mobileNumber"
+                onlyCountries={["IN"]}
+                id="mobileNumber"
+                label="Mobile Number"
+                value={formik.values.mobileNumber}
+                onInput={formik.handleChange}
+                onBlur={formik.handleBlur}
+                error={formik.touched.mobileNumber && Boolean(formik.errors.mobileNumber)}
+                helperText={formik.touched.mobileNumber && formik.errors.mobileNumber}
+                disableDropdown
+                forceCallingCode
+                fullWidth
+                defaultCountry="IN"
+                sx={{ marginBottom: "12px" }}
+              />
+              <LoadingButton loading={loading} type="submit" fullWidth sx={{ marginBottom: "12px" }} variant="contained">
+                Generate OTP
+              </LoadingButton>
+
+              <Divider flexItem textAlign="center" sx={{ marginBottom: "12px" }} />
+
+              <div style={{ marginBottom: "12px" }}>
+                <span>Dont have account?</span>
+              </div>
+
+              <Button onClick={() => push("/signup")} fullWidth variant="outlined">
+                Sign up
+              </Button>
+            </form>
+          </div>
         </div>
-        <div className="main-content">
-          <form className="login-form " ref={formref.current} onSubmit={formik.handleSubmit}>
-            <div className="app_title" style={{ marginBottom: "12px" }}>
-              Log In
-            </div>
-            <MuiTelInput
-            disableFormatting
-              name="mobileNumber"
-              onlyCountries={["IN"]}
-              id="mobileNumber"
-              label="Mobile Number"
-              value={formik.values.mobileNumber}
-              onInput={formik.handleChange}
-              onBlur={formik.handleBlur}
-              error={
-                formik.touched.mobileNumber && Boolean(formik.errors.mobileNumber)
-              }
-              helperText={
-                formik.touched.mobileNumber && formik.errors.mobileNumber
-              }
-              disableDropdown
-              forceCallingCode
-              fullWidth
-              defaultCountry="IN"
-              sx={{ marginBottom: "12px" }}
-            />
-            <LoadingButton loading={loading} type="submit" fullWidth sx={{ marginBottom: "12px" }} variant="contained">
-              Generate OTP
-            </LoadingButton>
-
-            <Divider
-              flexItem
-              textAlign="center"
-              sx={{ marginBottom: "12px" }}
-            />
-
-            <div style={{ marginBottom: "12px" }}>
-              <span>Dont have account?</span>
-            </div>
-
-            <Button
-              onClick={() => push("/signup")}
-              fullWidth
-              variant="outlined"
-            >
-              Sign up
-            </Button>
-          </form>
-        </div>
-      </div>
+      )}
+    </main>
   );
 }

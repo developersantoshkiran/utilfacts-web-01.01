@@ -3,8 +3,9 @@ import { CreateEmailResponseSuccess, Resend } from 'resend';
 let resend = new Resend(process.env.RESEND_API_KEY)
 export async function EmailService(from: string, to: Array<string>, sub: string, emailTemplate: any, tempateProps: Record<string, any>, cc: Array<string> = []): Promise<CreateEmailResponseSuccess | null> {
   try {
+    const senderEmail = process.env.NODE_ENV === 'production' ? from : 'onboarding@resend.dev';
     const { data, error } = await resend.emails.send({
-      from,
+      from: senderEmail,
       to,
       subject: sub,
       react: emailTemplate(tempateProps),
